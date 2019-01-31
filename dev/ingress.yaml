@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx/client_max_body_size: "0"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+  labels:
+    app: frontend-web-app
+    environment: dev
+    tier: frontend
+  name: frontend-web-app
+  namespace: k8s-training-apps-dev
+spec:
+  rules:
+    #Replace host: value
+  - host: image-proc-student-N.dev.training.oteemolabs.com
+    http:
+      paths:
+      - path: /v0.1
+        backend:
+          serviceName: backend-image-processor
+          servicePort: 80
+      - path: /
+        backend:
+          serviceName: frontend-web-app
+          servicePort: 80
+  tls:
+  #Replace host: value
+  - hosts:
+    - image-proc-student-N.dev.training.oteemolabs.com
+    secretName: <your-tls-cert-secret>
+

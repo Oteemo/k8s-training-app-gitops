@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: backend-image-processor
+  labels:
+    app: backend-image-processor
+    environment: production
+    tier: backend
+  namespace: k8s-training-apps-prod
+spec:
+  selector:
+    app: backend-image-processor
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8900

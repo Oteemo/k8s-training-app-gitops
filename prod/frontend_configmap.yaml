@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-web-app-env-config
+  namespace: k8s-training-apps-prod
+  labels:
+    app: frontend-web-app
+    environment: production
+    tier: frontend
+# Replace the "baseAddress" value with your https://student-N.training.oteemolabs.com
+data:
+  environment.json: |
+    { "production": "true",
+      "settings": {
+                    "baseAddress":
+                    "https://image-proc-student-N.training.oteemolabs.com",
+                    "port": "443",
+                    "apiUrl": "/v0.1/pedestrian_detector",
+                    "environment": "Production"
+                  }
+    }

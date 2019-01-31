@@ -1,0 +1,47 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: backend-image-processor
+    environment: dev
+    tier: backend
+  annotations:
+    flux.weave.works/automated: 'true'
+    flux.weave.works/tag.backend-image-processor: glob:dev-*
+  name: backend-image-processor
+  namespace: k8s-training-apps-dev
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 5
+  selector: #Notice how the selectors are matching labels
+    matchLabels:
+      app: backend-image-processor
+      environment: dev
+      tier: backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # how many pods we can add at a time
+      maxUnavailable: 1 # maxUnavailable define how many pods can be unavailable during the rolling update
+  template:
+    metadata:
+      labels:
+        app: backend-image-processor #This is the label being selected
+    spec:
+      containers:
+        # Replace the image value
+      - image: <ecr repo uri>:<tag>
+        imagePullPolicy: Always
+        name: backend-image-processor
+        ports:
+        - containerPort: 8900
+          protocol: TCP
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "750m"

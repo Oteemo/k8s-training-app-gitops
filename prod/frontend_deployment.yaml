@@ -1,0 +1,56 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend-web-app
+    environment: production
+    tier: frontend
+  annotations:
+    flux.weave.works/automated: 'true'
+    flux.weave.works/tag.frontend-web-app: glob:prod-*
+  name: frontend-web-app
+  namespace: k8s-training-apps-prod
+spec:
+  replicas: 2
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 5
+  selector: #Notice how the selectors are matching labels
+    matchLabels:
+      app: frontend-web-app
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # how many pods we can add at a time
+      maxUnavailable: 1 # maxUnavailable define how many pods can be unavailable during the rolling update
+  template:
+    metadata:
+      labels:
+        app: frontend-web-app #This is the label being selected
+        environment: production
+        tier: frontend
+    spec:
+      containers:
+        # Replace the image value
+      - image: <ecr repo uri>:<tag>
+        imagePullPolicy: Always
+        name: frontend-web-app
+        ports:
+        - containerPort: 4200
+          protocol: TCP
+        volumeMounts:
+        - name: frontend-web-app-env-config
+          mountPath: /usr/src/app/src/assets/environment.json
+          subPath: environment.json
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: frontend-web-app-env-config
+        configMap:
+          name: frontend-web-app-env-config
+          defaultMode: 0777
